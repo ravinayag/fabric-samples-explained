@@ -214,7 +214,7 @@ Change dir to /home/ubuntu/fabric-samples/newnet/org3-artifacts
 $ cryptogen generate --config=./org3-crypto.yaml
 $ export FABRIC_CFG_PATH=$PWD && ../../bin/configtxgen -printOrg Org3MSP > ../channel-artifacts/org3.json
 $ cd ../ && cp -r crypto-config/ordererOrganizations org3-artifacts/crypto-config/
-$ sudo apt-get -y update && sudo apt-get -y install jq
+$ sudo apt-get -y update && sudo apt-get -y install jq 
 ```
 #### 3,  Gathering the Channel configurations and updating with new org to existing channel
 ```
@@ -272,11 +272,142 @@ $ peer channel join -b mychannel2.block
 ##comeback to peer0.org3 and install chaincode
 $ export CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org3.example.com/peers/peer0.org3.example.com/tls/ca.crt 
 export CORE_PEER_ADDRESS=peer0.org3.example.com:11051
+peer chaincode install -n mycc -v 1.0 -l golang -p github.com/chaincode/chaincode_example02/go/
+
+## Query from org3 node for the assets Do this step after chaincode has instantiated from Org2.
+peer chaincode query -C mychannel2 -n mycc -c '{"Args":["query","a"]}'
+
 ```
 
 #### 5, Install Chaincode. 
 
-Preparing for this...................
+Now your network is up and running,  you have to deploy chaincode/smartcontracts over the network
+your network consists of one orderer and 4 peers ( 2 from each org.)
+we have one cli container to execute our binaries.
+
+Lets install the chaincode on peer0.org1 export the variables first.
+
+newnet$ docker exec cli sh ./scripts/ccinsstallpeer0.org1.sh
+
+OR
+
+$ docker exec -it cli bash   ### you get the root prompt for contianer
+
+export CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt
+export CORE_PEER_TLS_KEY_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/server.key
+export CORE_PEER_LOCALMSPID=Org1MSP
+export CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+export CORE_PEER_TLS_CERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/server.crt
+export CORE_PEER_TLS_ENABLED=true
+export CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp
+export CORE_PEER_ID=cli
+export CORE_PEER_ADDRESS=peer0.org1.example.com:7051
+peer chaincode install -n mycc -v 1.0 -l golang -p github.com/chaincode/chaincode_example02/go/
+
+Do this same for Org2
+Install chaincode on peer0.org2...
+export CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt
+export CORE_PEER_TLS_KEY_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/server.key
+export CORE_PEER_LOCALMSPID=Org2MSP
+export CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+export CORE_PEER_TLS_CERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/server.crt
+export CORE_PEER_TLS_ENABLED=true
+export CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp
+export CORE_PEER_ID=cli
+export CORE_PEER_ADDRESS=peer0.org2.example.com:9051
+peer chaincode install -n mycc -v 1.0 -l golang -p github.com/chaincode/chaincode_example02/go/
+
+Installing chaincode on peer1.org2...
+export CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt
+export CORE_PEER_TLS_KEY_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/server.key
+export CORE_PEER_LOCALMSPID=Org2MSP
+export CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+export CORE_PEER_TLS_CERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/server.crt
+export CORE_PEER_TLS_ENABLED=true
+export CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp
+export CORE_PEER_ID=cli
+export CORE_PEER_ADDRESS=peer1.org2.example.com:10051
+peer chaincode install -n mycc -v 1.0 -l golang -p github.com/chaincode/chaincode_example02/go/
+
+
+Now lets instantiate the chaincode to the network
+
+you can run the script or below with variables
+
+export CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt
+export CORE_PEER_TLS_KEY_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/server.key
+export CORE_PEER_LOCALMSPID=Org2MSP
+export CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+export CORE_PEER_TLS_CERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/server.crt
+export CORE_PEER_TLS_ENABLED=true
+export CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp
+export CORE_PEER_ID=cli
+export CORE_PEER_ADDRESS=peer0.org2.example.com:9051
+peer chaincode instantiate -o orderer.example.com:7050 --tls true --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem -C mychannel2 -n mycc -l golang -v 1.0 -c '{"Args":["init","a","100","b","200"]}' -P 'AND ('\''Org1MSP.peer'\'','\''Org2MSP.peer'\'')'
+
+After instantiate the chaincode, you can query the assets.you will get the value of "A" is 100. 
+
+
+Querying chaincode on peer0.org1...
+export CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt
+export CORE_PEER_TLS_KEY_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/server.key
+export CORE_PEER_LOCALMSPID=Org1MSP
+export CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+export CORE_PEER_TLS_CERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/server.crt
+export CORE_PEER_TLS_ENABLED=true
+export CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp
+export CORE_PEER_ID=cli
+export CORE_PEER_ADDRESS=peer0.org1.example.com:7051
+peer chaincode query -C mychannel2 -n mycc -c '{"Args":["query","a"]}'
+
+Lets invoke the transaction from "A" to "B"   and do query from pee1.org2 for transaction status
+
+
+
+Sending invoke transaction on peer0.org1 peer0.org2...
+export CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt
+export CORE_PEER_TLS_KEY_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/server.key
+export CORE_PEER_LOCALMSPID=Org1MSP
+export CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+export CORE_PEER_TLS_CERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/server.crt
+export CORE_PEER_TLS_ENABLED=true
+export CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp
+export CORE_PEER_ID=cli
+export CORE_PEER_ADDRESS=peer0.org1.example.com:7051
+export CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt
+export CORE_PEER_TLS_KEY_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/server.key
+export CORE_PEER_LOCALMSPID=Org2MSP
+export CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+export CORE_PEER_TLS_CERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/server.crt
+export CORE_PEER_TLS_ENABLED=true
+export CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp
+export CORE_PEER_ID=cli
+export CORE_PEER_ADDRESS=peer0.org2.example.com:9051
+
+export ORDERER_CA=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
+export PEER0_ORG1_CA=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt
+export PEER0_ORG2_CA=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt
+
+peer chaincode invoke -o orderer.example.com:7050 --tls true --cafile $ORDERER_CA  -C mychannel2 -n mycc --peerAddresses peer0.org1.example.com:7051 --tlsRootCertFiles $PEER0_ORG1_CA  --peerAddresses peer0.org2.example.com:9051 --tlsRootCertFiles $PEER0_ORG2_CA -c '{"Args":["invoke","a","b","10"]}'
+
+
+Query from  Peer1.org2 and you should get value of "a" is 90.
+ 
+Querying chaincode on peer1.org2...
+export CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt
+export CORE_PEER_TLS_KEY_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/server.key
+export CORE_PEER_LOCALMSPID=Org2MSP
+export CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+export CORE_PEER_TLS_CERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/server.crt
+export CORE_PEER_TLS_ENABLED=true
+export CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp
+export CORE_PEER_ID=cli
+export CORE_PEER_ADDRESS=peer1.org2.example.com:10051
+===================== Querying on peer1.org2 on channel 'mychannel2'... =====================
+Attempting to Query peer1.org2 ...3 secs
++ peer chaincode query -C mychannel2 -n mycc -c '{"Args":["query","a"]}'
+
+
 
 
 #########################################################################################
