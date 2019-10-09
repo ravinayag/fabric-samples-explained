@@ -7,6 +7,8 @@ Audience:  Newcommers - To learn Hyplerledger fabric with default samples. forke
 Forked from [Fabric-samples](https://github.com/hyperledger/fabric-samples) first-network
 Ensure all prerequesties are completed.if not refer this[script](https://github.com/ravinayag/Hyperledger/blob/master/download_hlf.sh)
 
+Here is the Network Diagram for the fabric ![Networkdiag](network.png)
+
 ####  1, Create folder name called newnet under fabric-samples folder and move as your working dir.
 
 #### 2, Copy files from first-network as below
