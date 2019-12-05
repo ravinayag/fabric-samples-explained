@@ -1,3 +1,6 @@
+echo " #####  Copy the Chaincode_exampl02 folder to path/to/fabric_samples/chaincode #####"
+echo " #####  Note: Its important to take above step for install the chaincode contract ##### "
+
 source scripts/1_envsetup.sh
 ## firsttime script ignored here
 docker-compose -f docker-compose-cli.yaml up -d
