@@ -8,6 +8,8 @@ Forked from [Fabric-samples](https://github.com/hyperledger/fabric-samples) firs
 Ensure all prerequesties are completed, if not refer this [Download_script](https://github.com/ravinayag/Hyperledger/blob/master/download_hlf.sh) 
 and [prereq_script](https://github.com/ravinayag/Hyperledger/blob/master/prereqs_hlfv14.sh)
 
+Note : The Recent Fabric samples masters, chaincode_example02 is not availble, Hence i update this folder here. you have to copy this folder under fabric-samples/chaincode folder.
+
 Here is the Network Diagram for the fabric ![Networkdiag](network.png)
 
 ####  1, Create folder name called newnet under fabric-samples folder and move as your working dir.
