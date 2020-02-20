@@ -1,4 +1,4 @@
-# Fabric-Samples-Explained
+# Fabric-Samples-Explained - First Network
 
 # For Learning Basic Hyperlerger fabric and how it functions.
 
