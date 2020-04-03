@@ -227,7 +227,7 @@ CORE_PEER_ADDRESS=peer0.org1.example.com:7051
 ORDERER_CA=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
 peer channel update -o orderer.example.com:7050 -c $CHANNEL_NAME -f ./channel-artifacts/Org1MSPanchors.tx --tls $CORE_PEER_TLS_ENABLED --cafile $ORDERER_CA
 ```
-#### 5, Now update anchor peer for org2 to the channel  
+#### 7, Now update anchor peer for org2 to the channel  
 ######### Repeat same from the second org - Org2 ##########
 
 ```
