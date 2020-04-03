@@ -134,7 +134,7 @@ Capabilities:
         # prior releases.
         # Prior to enabling V1.4.3 channel capabilities, ensure that all
         # orderers and peers on a channel are at v1.4.3 or later.
-        V1_4_3: true
+        V1_4_2: true
         # V1.3 for Channel enables the new non-backwards compatible
         # features and fixes of fabric v1.3
         V1_3: false
